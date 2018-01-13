@@ -409,12 +409,16 @@ function mnu_SavePos_Callback(hObject, eventdata, handles)
     yvert = handles.yvert;
     imagesize = handles.imagesize;
     alpha = handles.alpha;
+    [FileName,PathName] = uiputfile('*.mat','Save Positions As');
+    save(strcat(PathName,'\',FileName),'Positions','floorplan','polyregion','xvert','yvert','imagesize','alpha');
     if isfield(handles,'RMSCalDH')
         RMSCalDH = handles.RMSCalDH;
+        save(strcat(PathName,'\',FileName),'RMSCalDH','-append');
     end
     if isfield(handles,'TauMinsAnechoics')
-        TauMinsAnechoics = handles.TauMinsAnechoics;
-    end
+        TauMinsAnechoics = handles.TauMinsAnechoics;   
+        save(strcat(PathName,'\',FileName),'TauMinsAnechoics','-append');
+    end  
     if isfield(handles,'AllResults')
         AllResults = handles.AllResults;
         fc = handles.fc;
@@ -422,11 +426,10 @@ function mnu_SavePos_Callback(hObject, eventdata, handles)
         %echoes = handles.echoes;
         colstr = handles.colstr;
         col2str = handles.col2str;
-        strparam = handles.strparam;
-        
+        strparam = handles.strparam;  
+        save(strcat(PathName,'\',FileName),'AllResults','fc','FS','colstr','col2str','strparam','-append');
     end    
-    [FileName,PathName] = uiputfile('*.mat','Save Positions As');
-    save(strcat(PathName,'\',FileName),'Positions','floorplan','polyregion','xvert','yvert','imagesize','alpha','TauMinsAnechoics','RMSCalDH','AllResults','fc','FS','colstr','col2str','strparam');
+    
 
 function mnu_SavePrj_Callback(hObject, eventdata, handles)
 
