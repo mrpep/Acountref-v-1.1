@@ -50,7 +50,7 @@ function GUI_Main_OpeningFcn(hObject, eventdata, handles, varargin)
     addpath(strcat(pwd,'\Functions\Utils'));
     npositions = 0; %numero de posiciones
     counter = 0; %contador para el nombre de posicion
-    NSources = 2; %Cambiar si se quieren m·s posiciones de fuente
+    NSources = 2; %Cambiar si se quieren m√°s posiciones de fuente
     for i=1:NSources       
         SourcesStr(i) = cellstr(num2str(i));
     end
@@ -102,7 +102,7 @@ function Combo_Colormap_CreateFcn(hObject, eventdata, handles)
     end
 
 function List_Positions_Callback(hObject, eventdata, handles)
-    %Al hacer clic en la lista se muestra la info de esa posiciÛn.
+    %Al hacer clic en la lista se muestra la info de esa posici√≥n.
     global Positions ResultsObtained
     source = get(handles.Combo_SourceSet,'Value');
     selpos = get(handles.List_Positions,'Value');
@@ -220,7 +220,7 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
     global npositions Positions ResultsObtained NSources
     calcwait = waitbar(0,'Preparing Smoke Bomb.');
     
-    %ObtenciÛn de par·metros de entrada.
+    %Obtenci√≥n de par√°metros de entrada.
     
     isoctave = get(handles.IsOct,'Value');
     isthirdoctave = get(handles.Is3Oct,'Value');
@@ -244,7 +244,7 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
 
     %Settings:
     threshold = -20;
-    %Calculo de par·metros para cada posiciÛn:
+    %Calculo de par√°metros para cada posici√≥n:
     AllResults = cell(NSources + 1,npositions); %2 para las fuentes y 1 para la media de ambas
     fc = 0;
     for i=1:npositions
@@ -727,7 +727,7 @@ function PlotMap(handles,hObject,band,param,source,show)
     if show
         waitbar(2/4)
     end
-    %Se crea una imagen del mapeo con el mismo tamaÒo de la imagen del plano y
+    %Se crea una imagen del mapeo con el mismo tama√±o de la imagen del plano y
     %se guarda en archivo temporal:
     mapfig = figure('rend','opengl','Visible','off');
     xf = 1:handles.imagesize(2);
@@ -1007,7 +1007,7 @@ function mnu_BatchLoad_Callback(hObject, eventdata, handles)
     
 function mnu_LoadCal_Callback(hObject, eventdata, handles)
 
-    %Ac· abrir calibraciones, con algun codigo de nombre, calcular RMSs de
+    %Ac√° abrir calibraciones, con algun codigo de nombre, calcular RMSs de
     %referencia y meterlos en handles.RMSCal
     [filename_audios, pathname_audios] = uigetfile({'*.wav','WAV-files (*.wav)'},'Pick calibration files','MultiSelect', 'on');
     for i=1:length(filename_audios)
@@ -1024,7 +1024,7 @@ function mnu_LoadCal_Callback(hObject, eventdata, handles)
 
 function mnu_LoadANs_Callback(hObject, eventdata, handles)
 
-    %Aca abrir anecoicos, con algun cÛdigo de nombre, calcular tauemins y
+    %Aca abrir anecoicos, con algun c√≥digo de nombre, calcular tauemins y
     %meterlos en handles.TauMinsAnechoics
     [~, pathname_audios] = uigetfile({'*.wav','WAV-files (*.wav)'},'Pick anechoic files','MultiSelect', 'on');
     [AN1,fs] = audioread(strcat(pathname_audios,'\','AN1.wav'));
@@ -1084,3 +1084,6 @@ function Btn_DrawMap_Callback(hObject, eventdata, handles)
     source = get(handles.Combo_SourceMap,'Value');
     
     PlotMap(handles,hObject,band,param,source,1)
+
+% --- Does nothing, but there are not more warnings now!
+function mnu_Export_Callback(hObject, eventdata, handles)
