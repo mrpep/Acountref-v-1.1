@@ -62,24 +62,57 @@ function Btn_Calc_Callback(hObject, eventdata, handles)
 global openedmeas openedfilt outdir
 
 if (openedmeas && openedfilt && outdir)
-    [inversefilt,fs] = audioread(strcat(handles.pathname_filt,'\',handles.filename_filt));
-    h = waitbar(0,'Please wait. This may take several minutes');
-    for i=1:length(handles.filename_meas)
-        waitbar(i/length(handles.filename_meas))
-        [xi,fs] = audioread(strcat(handles.pathname_meas,'\',char(handles.filename_meas(1,i))));
-        convolversystem = dsp.Convolver('Method','Frequency Domain');
-        impulse = step(convolversystem,xi,inversefilt);
-        if (get(handles.Radio_Normalize,'Value'))
-            impulse = (impulse/max(abs(impulse)));
-        elseif (get(handles.Radio_Preserve,'Value'))
-            if i==1
-                divisor = max(abs(impulse));
-                impulse = 0.8*(impulse/divisor);
-            else
+    [inversefilt, fs] = audioread(strcat(handles.pathname_filt, '\', ...
+        handles.filename_filt));
+    
+    convolversystem = dsp.Convolver('Method','Frequency Domain');
+    
+    if iscell(handles.filename_meas)% check if multiple files where chosen
+        
+        h = waitbar(0, 'Please wait. This may take several minutes');
+        for i = 1:length(handles.filename_meas)
+            waitbar(i / length(handles.filename_meas));
+            
+            [xi, fs] = audioread(strcat( handles.pathname_meas, '\', ...
+                char(handles.filename_meas(1, i))));
+            
+            impulse = step(convolversystem, xi, inversefilt);
+            
+            if (get(handles.Radio_Normalize, 'Value'))
+                impulse = impulse / max(abs(impulse));
+            elseif (get(handles.Radio_Preserve, 'Value'))
+                if i == 1
+                    divisor = max(abs(impulse));
+                end
                 impulse = 0.8*(impulse/divisor);
             end
+            
+            audiowrite(strcat(handles.folder_output, '\', ...
+                char(handles.filename_meas(1, i))), impulse, fs);
         end
-        audiowrite(strcat(handles.folder_output,'\',char(handles.filename_meas(1,i))),impulse,fs);
+        close(h)
+    else % only one file was chosen
+        % There is no need for waitbar for only one file... is it?
+        
+        [x, fs] = audioread(strcat( handles.pathname_meas, '\', ...
+                char(handles.filename_meas)));
+        
+        impulse = step(convolversystem, x, inversefilt);
+            
+        if (get(handles.Radio_Normalize, 'Value'))
+            impulse = impulse / max(abs(impulse));
+        elseif (get(handles.Radio_Preserve, 'Value'))
+            divisor = max(abs(impulse));
+            impulse = 0.8*(impulse/divisor);
+        end
+        
+        audiowrite(strcat(handles.folder_output, '\', ...
+                char(handles.filename_meas)), impulse, fs);
+        
+        uiwait(msgbox([ ...
+            'Done. It''s named "Batch Convolver" for a reason, you ' ...
+            'know... you can convolve multiple files by holding the ' ...
+            'Ctrl key while picking them.' ...
+        ], 'Convolution done', 'modal'))
     end
-    close(h)
 end
