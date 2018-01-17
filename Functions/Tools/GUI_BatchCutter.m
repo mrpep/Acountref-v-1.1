@@ -32,15 +32,24 @@ function Btn_Open_Callback(hObject, eventdata, handles)
 
 [filename_audios, pathname_audios] = uigetfile({'*.wav','WAV-files (*.wav)'},'Pick audio files','MultiSelect', 'on');
 
-handles.filename_audios = filename_audios;
-handles.pathname_audios = pathname_audios;
+% Check if at least one audio file was chosen
+if iscell(filename_audios) || ischar(filename_audios)
+    handles.filename_audios = filename_audios;
+    handles.pathname_audios = pathname_audios;
+    
+    if iscell(filename_audios)
+        [audiosample,fs] = audioread(strcat(pathname_audios,'\',char(filename_audios(1,1))));
+    else
+        [audiosample,fs] = audioread(strcat(pathname_audios,'\',filename_audios));
+    end
+    
+    audiosample = audiosample / max(abs(audiosample));
+    t = (0:length(audiosample)-1)/fs;
+    plot(handles.Plot_Audio, t, audiosample)
 
-[audiosample,fs] = audioread(strcat(pathname_audios,'\',char(filename_audios(1,1))));
-audiosample = audiosample/max(abs(audiosample));
-t = (0:length(audiosample)-1)/fs;
-plot(handles.Plot_Audio,t,audiosample)
+    guidata(hObject, handles);
+end
 
-guidata(hObject, handles);
 
 function Btn_Add_Callback(hObject, eventdata, handles)
 
@@ -56,9 +65,11 @@ segmentname = inputdlg(prompt,dlg_title,num_lines,defaultans);
 [xbegin,~] = ginput(1);
 hold(handles.Plot_Audio,'on');
 stem(handles.Plot_Audio,xbegin,1,'Marker','none','Color','g');
+stem(handles.Plot_Audio,xbegin,-1,'Marker','none','Color','g');
 [xend,~] = ginput(1);
 hold(handles.Plot_Audio,'on');
 stem(handles.Plot_Audio,xend,1,'Marker','none','Color','r');
+stem(handles.Plot_Audio,xend,-1,'Marker','none','Color','r');
 
 if (xbegin<xend)
     Segments{NSegments,1} = segmentname;
@@ -77,24 +88,44 @@ guidata(hObject, handles);
 function Btn_Save_Callback(hObject, eventdata, handles)
 
 outdir = uigetdir();
-Segments = handles.Segments;
-filenames_audio = handles.filename_audios;
-[a,~] = size(Segments);
-h = waitbar(0,'Please wait. This may take some seconds');
-for i = 1:length(filenames_audio)
-    waitbar(i/length(filenames_audio))
-    [audiosample,fs] = audioread(strcat(handles.pathname_audios,'\',char(filenames_audio(1,i))));
-    for j = 1:a
-        kbegin = round(fs*cell2mat(Segments(j,2)));
-        kend = round(fs*cell2mat(Segments(j,3)));
-        if (kbegin<1)
-            kbegin = 1;
+
+if outdir % check if any output directory was selected
+    Segments = handles.Segments;
+    filenames_audio = handles.filename_audios;
+    [a,~] = size(Segments);
+    h = waitbar(0,'Please wait. This may take some seconds');
+    
+    if iscell(filenames_audio) % multiple files case
+        for i = 1:length(filenames_audio)
+            waitbar(i/length(filenames_audio))
+            [audiosample,fs] = audioread(strcat(handles.pathname_audios,'\',char(filenames_audio(1,i))));
+            for j = 1:a
+                kbegin = round(fs*cell2mat(Segments(j,2)));
+                kend = round(fs*cell2mat(Segments(j,3)));
+                if (kbegin<1)
+                    kbegin = 1;
+                end
+                if (kend>length(audiosample))
+                    kend = length(audiosample);
+                end
+                audiosegment = audiosample(kbegin:kend);
+                audiowrite(strcat(outdir,'\',char(Segments{j,1}(1,1)),'_',char(filenames_audio(1,i))),audiosegment,fs);
+            end
         end
-        if (kend>length(audiosample))
-            kend = length(audiosample);
-        end        
-        audiosegment = audiosample(kbegin:kend);
-        audiowrite(strcat(outdir,'\',char(Segments{j,1}(1,1)),'_',char(filenames_audio(1,i))),audiosegment,fs);        
+    elseif ischar(filenames_audio) % one file case
+        [audiosample,fs] = audioread(strcat(handles.pathname_audios,'\',filenames_audio));
+        for j = 1:a
+            kbegin = round(fs*cell2mat(Segments(j,2)));
+            kend = round(fs*cell2mat(Segments(j,3)));
+            if (kbegin<1)
+                kbegin = 1;
+            end
+            if (kend>length(audiosample))
+                kend = length(audiosample);
+            end
+            audiosegment = audiosample(kbegin:kend);
+            audiowrite(strcat(outdir,'\',char(Segments{j,1}(1,1)),'_',filenames_audio),audiosegment,fs);
+        end
     end
+    close(h)
 end
-close(h)
