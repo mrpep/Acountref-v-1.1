@@ -279,8 +279,8 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
 
             end
             %Computo de la media entre posiciones de fuente:
-            for l = 1:NSources
-                MeanParametersi = 0;
+        MeanParametersi = 0;
+            for l = 1:NSources            
                 MeanParametersi = MeanParametersi + AllResults{l,i};
             end
             AllResults{NSources+1,i} = MeanParametersi/NSources;  
@@ -299,8 +299,8 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
                 
             end
             %Computo de la media entre posiciones de fuente:
-            for l = 1:NSources
-                MeanParametersi = 0;
+        MeanParametersi = 0;
+            for l = 1:NSources               
                 MeanParametersi = MeanParametersi + AllResults{l,i};
             end
             AllResults{NSources+1,i} = MeanParametersi/NSources;
@@ -314,8 +314,8 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
             
         end
         %Computo de la media entre posiciones de fuente:
-            for l = 1:NSources
-                MeanParametersi = 0;
+        MeanParametersi = 0;
+            for l = 1:NSources               
                 MeanParametersi = MeanParametersi + AllResults{l,i};
             end
             AllResults{NSources+1,i} = MeanParametersi/NSources;
