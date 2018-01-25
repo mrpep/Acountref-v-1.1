@@ -17,7 +17,7 @@ function [Parameters,EchoSpeechs,EchoMusics,fc,Fs] = CalculateParametersMono(IR,
         crosspoint = length(IRcut);
     end
     % Calculo de globales (sin filtrar)
-   
+    disp(strcat('The crosspoint is ',num2str(crosspoint)));
     IRglobal = IRcut(1:crosspoint);
     %Subjective windows:
     %To ensure enough signal into integration window:
@@ -33,10 +33,10 @@ function [Parameters,EchoSpeechs,EchoMusics,fc,Fs] = CalculateParametersMono(IR,
         toadd = repmat(IRcut(end-0.1*fs:end),1,6);
         IRglobal100ms = horzcat(IRcut,toadd);
     end
-    if crosspoint+floor(fs*1.8)<length(IRcut)
-        IRglobal350ms = IRcut(1:crosspoint+floor(fs*1.7));
+    if crosspoint+floor(fs*1.9)<length(IRcut)
+        IRglobal350ms = IRcut(1:crosspoint+floor(fs*1.9));
     else
-        toadd = repmat(IRcut(end-0.1*fs:end),1,17);
+        toadd = repmat(IRcut(end-0.1*fs:end),1,19);
         IRglobal350ms = horzcat(IRcut,toadd);
     end
     
