@@ -8,7 +8,7 @@ function [energyratio] = energyratioparam(IR,IR10ms,IR100ms,IR350ms,fs,a,b,c,d,o
     asamples = round(fs*a/1000); bsamples = round(fs*b/1000); csamples = round(fs*c/1000); dsamples = round(fs*d/1000);
     bsamples10 = bsamples; bsamples100 = bsamples; bsamples350 = bsamples;
     dsamples10 = dsamples; dsamples100 = dsamples; dsamples350 = dsamples;
-    
+
     if (a == 0)
         asamples = 1;
     end
@@ -34,27 +34,29 @@ function [energyratio] = energyratioparam(IR,IR10ms,IR100ms,IR350ms,fs,a,b,c,d,o
     if (dsamples > length(IR))
         dsamples = length(IR);
     end
+    if (dsamples10 > length(IR10ms))
+        dsamples10 = length(IR10ms);
+    end
+    if (dsamples100 > length(IR100ms))
+        dsamples100 = length(IR100ms);
+    end
+    if (dsamples350 > length(IR350ms))
+        dsamples350 = length(IR350ms);
+    end
+    
     if (bsamples > length(IR))
         bsamples = length(IR);
     end
-    if (dsamples > length(IR10ms))
-        dsamples10 = length(IR10ms);
-    end
-    if (bsamples > length(IR10ms))
+    if (bsamples10 > length(IR10ms))
         bsamples10 = length(IR10ms);
     end
-    if (dsamples > length(IR100ms))
-        dsamples100 = length(IR100ms);
-    end
-    if (bsamples > length(IR100ms))
+    if (bsamples100 > length(IR100ms))
         bsamples100 = length(IR100ms);
     end
-    if (dsamples > length(IR350ms))
-        dsamples350 = length(IR350ms);
-    end
-    if (bsamples > length(IR350ms))
+    if (bsamples350 > length(IR350ms))
         bsamples350 = length(IR350ms);
     end
+    
     %Primero ventaneo la señal
     num = IR(asamples:bsamples);
     den = IR(csamples:dsamples);
@@ -80,7 +82,7 @@ function [energyratio] = energyratioparam(IR,IR10ms,IR100ms,IR350ms,fs,a,b,c,d,o
     energyratio(3) = 10*log10(intnum100/intden100);
     
     %350 ms:
-        
+    
     IR350num = IR350ms(asamples:bsamples350);
     IR350den = IR350ms(csamples:dsamples350);
     intnum350 = trapz(IR350num.^2);
