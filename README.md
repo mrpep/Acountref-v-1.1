@@ -6,5 +6,6 @@ Added functionalities to version 1.0:
 - Subjective integration windows added: 10, 100 and 350 ms. (This calculation takes time so you will have to wait significantly more to obtain results).
 - XLS export bugs fixed.
 - Windowing method changed in energy ratio calculations (the signal is windowed before filtering)
+- XLS import option.
 
 
