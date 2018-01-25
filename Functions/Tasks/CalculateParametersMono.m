@@ -12,23 +12,44 @@ function [Parameters,EchoSpeechs,EchoMusics,fc,Fs] = CalculateParametersMono(IR,
     if NC == 1
         crosspoint = lundeby(IRcut,fs);
     elseif NC == 2
-        crosspoint = fs*PepinoMethodFast(t,IRcut,fs,0.01);
+        crosspoint = fs*PepinoMethodSlow(t,IRcut,fs,0.01);
     elseif NC == 0
         crosspoint = length(IRcut);
     end
     % Calculo de globales (sin filtrar)
-    
+   
     IRglobal = IRcut(1:crosspoint);
-    tic
-    IR10ms = integratewindow(IRglobal,fs,0.01);
-    ms10 = toc
-    tic
-    IR100ms = integratewindow(IRglobal,fs,0.1);
-    ms100 = toc
-    tic
-    IR350ms = integratewindow(IRglobal,fs,0.35);
-    ms350 = toc
+    %Subjective windows:
+    %To ensure enough signal into integration window:
+    if crosspoint+floor(fs*0.06)<length(IRcut)
+        IRglobal10ms = IRcut(1:crosspoint+floor(fs*0.06));
+    else
+        toadd = repmat(IRcut(end-0.1*fs:end),1,1);
+        IRglobal10ms = horzcat(IRcut,toadd);
+    end
+    if crosspoint+floor(fs*0.51)<length(IRcut)
+        IRglobal100ms = IRcut(1:crosspoint+floor(fs*0.51));
+    else
+        toadd = repmat(IRcut(end-0.1*fs:end),1,6);
+        IRglobal100ms = horzcat(IRcut,toadd);
+    end
+    if crosspoint+floor(fs*1.8)<length(IRcut)
+        IRglobal350ms = IRcut(1:crosspoint+floor(fs*1.7));
+    else
+        toadd = repmat(IRcut(end-0.1*fs:end),1,17);
+        IRglobal350ms = horzcat(IRcut,toadd);
+    end
     
+    tic
+    IR10ms = integratewindow(IRglobal10ms,fs,0.01);
+    ms10 = toc;
+    tic
+    IR100ms = integratewindow(IRglobal100ms,fs,0.1);
+    ms100 = toc;
+    tic
+    IR350ms = integratewindow(IRglobal350ms,fs,0.35);
+    ms350 = toc;
+
     C50 = energyratioparam(IRglobal,IR10ms,IR100ms,IR350ms,fs,0,50,50,-1,octave);
     C80 = energyratioparam(IRglobal,IR10ms,IR100ms,IR350ms,fs,0,80,80,-1,octave);
     D50 = energyratioparam(IRglobal,IR10ms,IR100ms,IR350ms,fs,0,50,0,-1,octave);
@@ -62,6 +83,7 @@ function [Parameters,EchoSpeechs,EchoMusics,fc,Fs] = CalculateParametersMono(IR,
         
     IRsq10 = IR10ms.^2;
     edc10 = 10*log10(fliplr(cumtrapz(IRsq10(end:-1:1))));
+    
     [EDT10,T2010,T3010] = decayparameters(edc10,fs);
     [EchoSpeech10,maxechospeech10,tmaxspeech10] = EchoCriterion(IR10ms,fs,2/3,0.009);
     [EchoMusic10,maxechomusic10,tmaxmusic10] = EchoCriterion(IR10ms,fs,1,0.014);
@@ -107,6 +129,7 @@ function [Parameters,EchoSpeechs,EchoMusics,fc,Fs] = CalculateParametersMono(IR,
     
     IRsq350 = IR350ms.^2;
     edc350 = 10*log10(fliplr(cumtrapz(IRsq350(end:-1:1))));
+        
     [EDT350,T20350,T30350] = decayparameters(edc350,fs);
     [EchoSpeech350,maxechospeech350,tmaxspeech350] = EchoCriterion(IR350ms,fs,2/3,0.009);
     [EchoMusic350,maxechomusic350,tmaxmusic350] = EchoCriterion(IR350ms,fs,1,0.014);
