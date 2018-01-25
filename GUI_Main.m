@@ -259,7 +259,8 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
                 [AN1,~] = audioread(char(Positions(i,8,k)));
                 [AN2,~] = audioread(char(Positions(i,9,k)));
                 [AN3,~] = audioread(char(Positions(i,10,k)));
-                [AN4,~] = audioread(char(Positions(i,11,k)));                        
+                [AN4,~] = audioread(char(Positions(i,11,k)));        
+                disp(Positions(i,6,k));
                 [Parameters,EchoSpeech,EchoMusic,fc,FS] = CalculateParametersMono(IR',WN,fs,octave,NC,threshold,CalRMS); %Calcula todos los parametros acusticos y los mete en un cell array  
                 [TauMins,DeltaTau] = CalculateAnechoics(AN1,AN2,AN3,AN4,handles.TauMinsAnechoics,fs);                 
                 Taus = zeros(4,length(fc)+4);
@@ -293,7 +294,7 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
                 [AN2,~] = audioread(char(Positions(i,9,k)));
                 [AN3,~] = audioread(char(Positions(i,10,k)));
                 [AN4,~] = audioread(char(Positions(i,11,k))); 
-
+                disp(Positions(i,6,k));
                 [ParametersDH,fc,Fs] = CalculateParametersStereo(IR,AN1,AN2,AN3,AN4,fs,handles.RMSCalDH,octave,NC,-20);
                 AllResults{k,i} = ParametersDH;
                 
@@ -308,6 +309,7 @@ function Btn_Calculate_Callback(hObject, eventdata, handles)
             
             for k = 1:NSources
                 [IR,fs] = audioread(char(Positions(i,6,k)));
+                disp(Positions(i,6,k));
                 [ParametersSF] = CalculateSF(IR,fs,octave,NC,threshold);
                 AllResults{k,i} = ParametersSF;
             end
