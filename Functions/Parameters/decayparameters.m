@@ -1,11 +1,22 @@
 function [EDT,T20,T30] = decayparameters(schroeder,fs)
 
+%EDC preprocessing to ensure 35 dB decay: tail adding
+
+
 %Index for TR calculus
     i5 = find(schroeder > schroeder(1)-5,1,'last');
     i15 = find(schroeder > schroeder(1)-10,1,'last');
     i25 = find(schroeder > schroeder(1)-25,1,'last');
     i35 = find(schroeder > schroeder(1)-35,1,'last');
     
+if i35>0.9*length(schroeder)
+    schroeder = addtailEDC(schroeder,fs);
+    i5 = find(schroeder > schroeder(1)-5,1,'last');
+    i15 = find(schroeder > schroeder(1)-10,1,'last');
+    i25 = find(schroeder > schroeder(1)-25,1,'last');
+    i35 = find(schroeder > schroeder(1)-35,1,'last');
+end
+   
 t = (0:length(schroeder)-1)/fs;
 tedt = t(1:i15);
 t20 = t(i5:i25);
