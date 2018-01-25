@@ -1,9 +1,4 @@
 function [integratedir] = integratewindow(ir,fs,tau)
-    
-    %[ir,fs] = audioread('1.wav');
-    %ir = ir(:,1);
-    %ir = ir';
-    %tau = 0.35;
 
     begink = FindBeginIR(ir,0);
     ir = ir(begink:end);
@@ -27,7 +22,7 @@ function [integratedir] = integratewindow(ir,fs,tau)
     ir_negative=ir;
     ir_positive(ir<0)=0;
     ir_negative(ir>0)=0;
-
+    
     %ir_negative=(ir_negative).*(-1);
     %window = window';
     %Integración:
