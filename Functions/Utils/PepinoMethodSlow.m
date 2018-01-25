@@ -1,4 +1,4 @@
-function [crosspoint,fmodel,ecm] = PepinoMethod2(t,y,fs,resolution)
+function [crosspoint,fmodel,ecm] = PepinoMethodSlow(t,y,fs,resolution)
 
     crosspointgrid = (resolution:resolution:t(end));
     ecm = zeros(1,length(crosspointgrid));
