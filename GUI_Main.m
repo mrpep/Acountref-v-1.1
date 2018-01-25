@@ -134,11 +134,11 @@ function List_Positions_Callback(hObject, eventdata, handles)
     cla(handles.Plot_IR)
     
     %Si ya se cargo IR se grafica:
-    %if (isempty(Positions{selpos,6,source})==0)
-    %    [selIR,fs] = audioread(char(Positions(selpos,6,source)));
-    %    timeIR = (0:length(selIR)-1)/fs;
-    %    plot(handles.Plot_IR,timeIR,selIR);
-    %end
+    if (isempty(Positions{selpos,6,source})==0)
+        [selIR,fs] = audioread(char(Positions(selpos,6,source)));
+        timeIR = (0:length(selIR)-1)/fs;
+        plot(handles.Plot_IR,timeIR,selIR);
+    end
     %Si ya hay resultados:
     if (ResultsObtained)
         ShowGridResults(hObject,handles,selpos,source)
