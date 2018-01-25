@@ -134,11 +134,11 @@ function List_Positions_Callback(hObject, eventdata, handles)
     cla(handles.Plot_IR)
     
     %Si ya se cargo IR se grafica:
-    if (isempty(Positions{selpos,6,source})==0)
-        [selIR,fs] = audioread(char(Positions(selpos,6,source)));
-        timeIR = (0:length(selIR)-1)/fs;
-        plot(handles.Plot_IR,timeIR,selIR);
-    end
+    %if (isempty(Positions{selpos,6,source})==0)
+    %    [selIR,fs] = audioread(char(Positions(selpos,6,source)));
+    %    timeIR = (0:length(selIR)-1)/fs;
+    %    plot(handles.Plot_IR,timeIR,selIR);
+    %end
     %Si ya hay resultados:
     if (ResultsObtained)
         ShowGridResults(hObject,handles,selpos,source)
@@ -378,7 +378,7 @@ function ShowGridResults(hObject,handles,selectedpos,selectedsource)
             set(handles.Grid_Results,'ColumnName',col2str);
         case 3
             set(handles.Grid_Results,'RowName',RowStringSF)
-            set(handles.Grid_Results,'ColumnName',col2str);
+            set(handles.Grid_Results,'ColumnName',colstr);
     end
     
     set(handles.Grid_Results,'Data',AllResults{selectedsource,selectedpos})
@@ -448,7 +448,7 @@ function mnu_ExportMap_Callback(hObject, eventdata, handles)
             if (i==7||i==8||(i>18&&i<27)||i>29&&i<34) %casos globales
                 nbands = 4;
             else
-                if(i<27)
+                if(i<27||i>33)
                     nbands = length(handles.colstr);
                     col2use = handles.colstr;
                 else
@@ -484,7 +484,7 @@ function mnu_ExportXLS_Callback(hObject, eventdata, handles)
             if (param==7||param==8||(param>18&&param<27)||param>29&&param<34) %casos globales
                 nbands = 4;
             else
-                if(param<27)
+                if(param<27||param>33)
                     nbands = length(handles.colstr);
                     col2use = handles.colstr;
                 else
@@ -525,6 +525,7 @@ function mnu_ExportXLS_Callback(hObject, eventdata, handles)
                     i = i+1;
                 end
             end
+            posstr = posstr(1:i-1);
             xlswrite(strcat('Source ',num2str(source)),Cols,char(handles.strparam(param)),'B1');
             xlswrite(strcat('Source ',num2str(source)),XLS,char(handles.strparam(param)),'B2');
             xlswrite(strcat('Source ',num2str(source)),posstr',char(handles.strparam(param)),'A2');
@@ -784,7 +785,7 @@ function PlotMap(handles,hObject,band,param,source,show)
     end
     
     title(figtitle)
-    print(wholefig,'FloorMap.jpg','-djpeg','-r100')
+    print(wholefig,'FloorMap.jpg','-djpeg','-r150')
 
     if (show)
         floormap = imread('FloorMap.jpg');
@@ -1087,3 +1088,60 @@ function Btn_DrawMap_Callback(hObject, eventdata, handles)
 
 % --- Does nothing, but there are not more warnings now!
 function mnu_Export_Callback(hObject, eventdata, handles)
+
+
+% --------------------------------------------------------------------
+function mnu_ImportXLS_Callback(hObject, eventdata, handles)
+    
+    uiwait(msgbox('Select modified xls files','Import XLS','modal'));
+    
+    [filename_XLS, pathname_XLS] = uigetfile({'*.xls;*.xlsx'},'Microsoft Excel Spreadsheets','MultiSelect', 'on');
+    nparams = 35;
+    xlsiwait = waitbar(0,'Wait some seconds please');
+    for source = 1:length(filename_XLS)
+        waitbar(source/3);
+        sourcenumber = strsplit(char(filename_XLS(source)),'e');
+        sourcenumber = strsplit(char(sourcenumber(2)),'.');
+        sourcenumber = str2num(char(sourcenumber(1)));
+        filepath = strcat(pathname_XLS,'\',char(filename_XLS(1,source)));
+        
+        for param = 1:nparams
+            
+            k = param+1;
+            
+            Parami = xlsread(filepath,k);
+            sizexls = size(Parami);
+            if (param==7||param==8||(param>18&&param<27)) %casos globales
+                nbands = 4;
+                a = 1;
+            else
+                if (param>29&&param<34) %Solo global
+                    a = 2;
+                    nbands = 1;
+                else
+                    nbands = sizexls(2)-1;
+                    a = 2;
+                end
+            end 
+            
+            if (param>26 && param<34)
+                param = param-26;
+            elseif (param>33)
+                param = param - 33;
+            end
+            
+            for pos = a:sizexls(1)
+
+                position = Parami(pos,1);
+                for band = 2:nbands+1
+                    valuecell = Parami(pos,band);
+                    AllResults{source,position}(param,band-1) = valuecell;
+                end
+            end
+        end
+    end
+    handles.AllResults = AllResults;
+    close(xlsiwait);
+    
+    guidata(hObject,handles);
+    ShowGridResults(hObject,handles,1,1)
