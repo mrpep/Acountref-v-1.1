@@ -1,6 +1,8 @@
 # Acountref-v-1.1
 Acountref is a MATLAB software designed for the processing of acoustic measurements in a room. Room acoustic parameters such as T30, C50, and many more (including Ando parameters) are obtained for every measured position and a mapping is created. This software was developed by Leonardo Pepino in order to accelerate the processing of acoustic measurements as it takes a long time in commercial softwares to analyze many audios and organisate the data. Acoustics measurements of this type are performed in the subject Instrumentos y Mediciones Acústicas of the career Ingenieria en Sonido at UNTref university (Argentina). 
 
+Note: Reccomended screen resolution for running this application is 1600 x 900. If Graphical interface components are not shown clearly, please test with different screen resolutions.
+
 Instructions:
 
 Executing GUI_Main.m opens a graphical user interface. Follow these steps:
