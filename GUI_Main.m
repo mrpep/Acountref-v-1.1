@@ -1,23 +1,4 @@
-%Positions Cell Array (i,j,k):
-% i= pos
-% j =
-    % 1 = Name
-    % 2 = X
-    % 3 = Y
-    % 4 = Mic Number
-    % 5 = Type: 1 = Monoaural 2 = Binaural 3 = Soundfield
-    % 6 = IR File
-    % 7 = WN File
-    % 8-11 = Anechoic 1-4 File
-    % 12 = Calibration Factor (94 dB)
-% k =  Fuente
-
-% SF:
-
-% Archivo Stereo, L = Figura 8, R = Omni
-
-%Cambiar enfoque de IR integradas subjetivamente -> calcularlas una vez de
-%entrada y listo.
+% Created by Leonardo Pepino - 2018 - Universidad Nacional de Tres de Febrero
 
 function varargout = GUI_Main(varargin)
 
@@ -63,7 +44,7 @@ function GUI_Main_OpeningFcn(hObject, eventdata, handles, varargin)
     guidata(hObject,handles);
     warning('off');
     
-    uiwait(msgbox('First click on the button Load Floor Plan and select an image of the room you measured (No smoke allowed)','Welcome to Acuntref','modal'))
+    uiwait(msgbox('First click on the button Load Floor Plan and select an image of the room you measured.','Welcome to Acountref','modal'))
 
     function varargout = GUI_Main_OutputFcn(hObject, eventdata, handles) 
 
@@ -440,7 +421,7 @@ function mnu_ExportMap_Callback(hObject, eventdata, handles)
     folder_name = uigetdir();
     nparams = length(handles.strparam);
     nsources = 3;
-    mapwait = waitbar(0,'Smoke some weed.');
+    mapwait = waitbar(0,'Time to drink coffee or smoke weed. Choose your drugs');
     for i=1:nparams
         waitbar(i/nparams);
         mkdir(folder_name,char(handles.strparam(i))) %Crea la carpeta del parametro:
@@ -604,7 +585,7 @@ function Btn_LoadPlan_Callback(hObject, eventdata, handles)
 
     %Definir area de mapeo:
 
-    uiwait(msgbox('Nice smoke. Now draw a polygon defining area to map. When closed, double click inside it to finish.','Define Mapping Area','modal'));
+    uiwait(msgbox('Nice place. Now draw a polygon defining area to map. When closed, double click inside it to finish.','Define Mapping Area','modal'));
     [maparea,xvert,yvert] = roipoly(floorplan);
     handles.polyregion = maparea;
     handles.xvert = xvert;
@@ -623,7 +604,7 @@ function Btn_LoadPlan_Callback(hObject, eventdata, handles)
     handles.imageHandle = imshow(floorplan);
     handles.alpha = alpha;
     % set(handles.imageHandle,'AlphaData',alpha);
-    uiwait(msgbox('Well Done. Now create listener points and assign IRs. This can be a paja so once finished consider saving positions from File Menu. To create listener points, click on Pick Position and then click over the floor plan in the desired position. Repeat the process of clicking pick position and floor plan. Once finished, go to File menu and load monoaural calibration files.','Mapping Area Defined','modal'))
+    uiwait(msgbox('Well Done. Now create listener points and assign IRs. Consider saving positions from File Menu. To create listener points, click on Pick Position and then click over the floor plan in the desired position. Repeat the process of clicking pick position and floor plan. Once finished, go to File menu and load monoaural calibration files.','Mapping Area Defined','modal'))
 
     guidata(hObject,handles);
     picked = 0;
@@ -684,7 +665,7 @@ function PlotMap(handles,hObject,band,param,source,show)
     % 34 -> SF
     global Positions npositions
     if show
-        mapwait = waitbar(0,'Generating smoke final attack. This could take some seconds maybe minutes. 500 Hz. Coff coff');
+        mapwait = waitbar(0,'Colors on the way. This could take some seconds maybe minutes.');
     end
     AllResults = handles.AllResults;
     %band = get(handles.Combo_Band,'Value');
@@ -1005,7 +986,7 @@ function mnu_BatchLoad_Callback(hObject, eventdata, handles)
         end       
     end
     
-    msgbox('Well done, now you are ready for the final fight! If you want to modify any file association with an specific position, just select the position in the list and click on the corresponding button on File Panel. If you feel you are ready just select a Noise correction method... coff coff Pepinos one not Lundeby... and the third octave filtering as Smoke likes most. Finally click on the magic button Calculate and wait not too much time I promise.','You are almost there')
+    msgbox('Well done! If you want to modify any file association with an specific position, just select the position in the list and click on the corresponding button on File Panel. If you feel you are ready just select a Noise correction method... coff coff Pepinos one not Lundeby... and the third octave filtering. Finally click on the magic button Calculate and wait not too much time I promise.','You are almost there')
     guidata(hObject,handles);
     
 function mnu_LoadCal_Callback(hObject, eventdata, handles)
@@ -1022,7 +1003,7 @@ function mnu_LoadCal_Callback(hObject, eventdata, handles)
     end
     handles.RMSCal = RMSCal;
     
-    msgbox('Well done, all Earthwork microphones are calibrated with laboratory precision. Now load those smoky and irritating anechoic files you played during the smoke session over and over again. Note that Sato code is dangerous and will throw lots of warnings. Later I will deactivate them, now just ignore them.','You are a winner')
+    msgbox('Well done, all Earthwork microphones are calibrated with laboratory precision. Now load those vintage anechoic files you played over and over again.','You are a winner')
     guidata(hObject,handles);
 
 function mnu_LoadANs_Callback(hObject, eventdata, handles)
@@ -1040,7 +1021,7 @@ function mnu_LoadANs_Callback(hObject, eventdata, handles)
     Tau(4) = TauEMin(AN4,fs);
     handles.TauMinsAnechoics = Tau;
     
-    msgbox('You are almost there. Now calibrate binaural files. You have to first open Left channel calibration file, and then right one','Developing love to slave work')
+    msgbox('You are almost there. Now calibrate binaural files. You have to first open Left channel calibration file, and then right one','No reflections allowed')
      
     guidata(hObject,handles);
 
@@ -1057,7 +1038,7 @@ function mnu_CalibrateBinaural_Callback(hObject, eventdata, handles)
     RMSR = CalcRMS(CalR,fsR,1);
     handles.RMSCalDH = RMSR/RMSL;
     
-    msgbox('Well done. The japanese duet, Ando and the Satos is proud of you. You are one step closer to the final boss. Prepare for the fight and go to Batch Load and select aaaaallllll of the measured audios. If you dont want me to go angry the filenames should have the next format : (microphone)_(content)_(source)_(position).wav. Microphones can be EW(mic number) (Earthworks),SF(Soundfield),DH(Ale Head), and should be followed by the mic number. Content should be AN(number), SWEEP or WHITE. Finally, source is F(number), and position P(number). For example: EW7_AN3_F1_P7.wav corresponds to the anechoic excerpt 3 recorded with Earthwork mic number 7 in position 7 with source in position 1. Understood? Finally note that dummy head files should be stereo, and SF also, with 8 figure in left channel and omni in right.','Please read this carefully')
+    msgbox('Well done. Prepare for the fight and go to Batch Load and select aaaaallllll of the measured audios. If you dont want me to go angry the filenames should have the next format : (microphone)_(content)_(source)_(position).wav. Microphones can be EW(mic number) (Earthworks),SF(Soundfield),DH(DummyHead), and should be followed by the mic number. Content should be AN(number), SWEEP or WHITE. Finally, source is F(number), and position P(number). For example: EW7_AN3_F1_P7.wav corresponds to the anechoic excerpt 3 recorded with Earthwork mic number 7 in position 7 with source in position 1. Understood? Finally note that dummy head files should be stereo, and SF also, with 8 figure in left channel and omni in right.','Please read this carefully')
     guidata(hObject,handles);
     
 function Combo_SourceMap_Callback(hObject, eventdata, handles)    
